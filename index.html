@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformasi Geometri Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #800020;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 0;
+            min-height: 600px;
+        }
+
+        .sidebar {
+            background: #f8f9fa;
+            padding: 25px;
+            border-right: 2px solid #e0e0e0;
+            max-height: 850px;
+            overflow-y: auto;
+        }
+
+        .canvas-area {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* RESPONSIVE STYLES */
+        @media (max-width: 1400px) {
+            .main-content {
+                grid-template-columns: 350px 1fr;
+            }
+            
+            canvas {
+                width: 100% !important;
+                height: auto !important;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .header p {
+                font-size: 0.9em;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 2px solid #e0e0e0;
+                max-height: none;
+                padding: 20px;
+            }
+
+            .canvas-area {
+                padding: 20px;
+            }
+
+            canvas {
+                width: 100% !important;
+                height: auto !important;
+                max-width: 600px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px 15px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+                margin-bottom: 5px;
+            }
+
+            .header p {
+                font-size: 0.85em;
+            }
+
+            .sidebar {
+                padding: 15px;
+            }
+
+            .section {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .section h3 {
+                font-size: 1.1em;
+            }
+
+            .controls {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .add-point-form {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .add-point-form button {
+                padding: 12px;
+            }
+
+            canvas {
+                max-width: 100%;
+            }
+
+            .point-list {
+                max-height: 300px;
+            }
+
+            .result-box {
+                max-height: 250px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+
+            .container {
+                border-radius: 10px;
+            }
+
+            .header {
+                padding: 15px 10px;
+            }
+
+            .header h1 {
+                font-size: 1.3em;
+            }
+
+            .header p {
+                font-size: 0.8em;
+            }
+
+            .sidebar {
+                padding: 10px;
+            }
+
+            .canvas-area {
+                padding: 10px;
+            }
+
+            .section {
+                padding: 12px;
+                margin-bottom: 12px;
+            }
+
+            .section h3 {
+                font-size: 1em;
+                margin-bottom: 10px;
+            }
+
+            label {
+                font-size: 0.85em;
+            }
+
+            input[type="number"], select {
+                padding: 8px;
+                font-size: 13px;
+            }
+
+            button {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .controls {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .coords-input {
+                grid-template-columns: 1fr;
+            }
+
+            .point-item {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+
+            .point-item button {
+                width: 100%;
+                padding: 8px;
+            }
+
+            .info-text {
+                font-size: 12px;
+                padding: 10px;
+            }
+
+            .axis-preview {
+                font-size: 11px;
+                padding: 8px;
+            }
+
+            .result-box {
+                padding: 12px;
+                font-size: 11px;
+            }
+
+            .result-box h4 {
+                font-size: 0.95em;
+            }
+
+            canvas {
+                border-width: 1px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .header h1 {
+                font-size: 1.1em;
+            }
+
+            .header p {
+                font-size: 0.75em;
+            }
+
+            .section h3 {
+                font-size: 0.95em;
+            }
+
+            button {
+                font-size: 13px;
+                padding: 9px;
+            }
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .section h3 {
+            color: #800020;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #800020;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #add8e6;
+        }
+
+        .btn-danger {
+            background: #add8e6;
+            padding: 8px 12px;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        canvas {
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            cursor: move;
+        }
+
+        .result-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .result-box h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+
+        .result-box h4:first-child {
+            margin-top: 0;
+        }
+
+        .result-box p {
+            margin: 5px 0;
+            color: #333;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .coords-input {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .point-list {
+            max-height: 400px;
+            overflow-y: auto;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .point-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .point-item span {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .point-item button {
+            width: auto;
+            padding: 6px 14px;
+            margin: 0;
+            font-size: 12px;
+        }
+
+        .add-point-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .add-point-form input {
+            margin: 0;
+        }
+
+        .add-point-form button {
+            margin: 0;
+            padding: 10px 20px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .info-text {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #1976d2;
+        }
+
+        .custom-inputs {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #667eea;
+        }
+
+        .axis-preview {
+            margin-top: 10px;
+            padding: 10px;
+            background: #fff3cd;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Geometry Kelompok 4</h1>
+            <p>Masukkan titik-titik bebas, otomatis terbentuk bangun & bisa ditransformasi!</p>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <!-- Input Titik-Titik -->
+                <div class="section">
+                    <h3>📍 Input Titik-Titik</h3>
+                    <div class="info-text">
+                        ✨ Masukkan minimal 1 titik! Sistem akan otomatis menggambar bangun sesuai jumlah titik yang dimasukkan.
+                    </div>
+                    
+                    <div class="add-point-form">
+                        <input type="number" id="newX" placeholder="X" value="0" step="0.5">
+                        <input type="number" id="newY" placeholder="Y" value="0" step="0.5">
+                        <button onclick="addPoint()" style="white-space: nowrap;">+ Tambah</button>
+                    </div>
+
+                    <div class="point-list" id="pointList"></div>
+                    <button onclick="clearAllPoints()" class="btn-danger">🗑️ Hapus Semua Titik</button>
+                </div>
+
+                <!-- Pilih Transformasi -->
+                <div class="section">
+                    <h3>🔄 Pilih Transformasi</h3>
+                    <div class="form-group">
+                        <label>Jenis Transformasi</label>
+                        <select id="transformType" onchange="updateTransformInputs()">
+                            <option value="reflection">Refleksi (Pencerminan)</option>
+                            <option value="translation">Translasi (Pergeseran)</option>
+                            <option value="rotation">Rotasi (Perputaran)</option>
+                            <option value="dilation">Dilatasi (Perbesaran/Pengecilan)</option>
+                        </select>
+                    </div>
+                    <div id="transformInputs"></div>
+                    <button onclick="applyTransform()">✨ Terapkan Transformasi</button>
+                    <button onclick="drawOriginal()" class="btn-secondary">↩️ Tampilkan Original Saja</button>
+                </div>
+
+                <!-- Hasil -->
+                <div class="section">
+                    <h3>📊 Hasil Transformasi</h3>
+                    <div id="resultBox" class="result-box">
+                        <p style="text-align: center; color: #999;">Masukkan titik dan terapkan transformasi untuk melihat hasil...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="canvas-area">
+                <canvas id="canvas" width="900" height="700"></canvas>
+                <div class="controls">
+                    <button onclick="resetView()">🔄 Reset View</button>
+                    <button onclick="zoomIn()">🔍+ Zoom In</button>
+                    <button onclick="zoomOut()">🔍- Zoom Out</button>
+                    <button onclick="downloadImage()">💾 Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let points = [];
+        let transformedPoints = [];
+        let scale = 25;
+        let offsetX = canvas.width / 2;
+        let offsetY = canvas.height / 2;
+
+        // Initialize
+        updateTransformInputs();
+        updatePointList();
+        drawGrid();
+
+        // Add point
+        function addPoint() {
+            const x = parseFloat(document.getElementById('newX').value) || 0;
+            const y = parseFloat(document.getElementById('newY').value) || 0;
+            
+            points.push({x, y});
+            updatePointList();
+            drawOriginal();
+            
+            // Clear input
+            document.getElementById('newX').value = '';
+            document.getElementById('newY').value = '';
+            document.getElementById('newX').focus();
+        }
+
+        // Remove point
+        function removePoint(index) {
+            points.splice(index, 1);
+            updatePointList();
+            drawOriginal();
+        }
+
+        // Clear all points
+        function clearAllPoints() {
+            if (confirm('Hapus semua titik?')) {
+                points = [];
+                transformedPoints = [];
+                updatePointList();
+                drawGrid();
+                document.getElementById('resultBox').innerHTML = '<p style="text-align: center; color: #999;">Masukkan titik dan terapkan transformasi untuk melihat hasil...</p>';
+            }
+        }
+
+        // Update point list display
+        function updatePointList() {
+            const container = document.getElementById('pointList');
+            
+            if (points.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Belum ada titik. Tambahkan titik pertama!</p>';
+                return;
+            }
+
+            container.innerHTML = points.map((p, i) => `
+                <div class="point-item">
+                    <span>P${i + 1}: (${p.x}, ${p.y})</span>
+                    <button onclick="removePoint(${i})" class="btn-danger">Hapus</button>
+                </div>
+            `).join('');
+        }
+
+        // Update transform inputs
+        function updateTransformInputs() {
+            const type = document.getElementById('transformType').value;
+            const container = document.getElementById('transformInputs');
+            
+            if (type === 'reflection') {
+                container.innerHTML = `
+                    <div class="form-group">
+                        <label>Sumbu/Garis Refleksi</label>
+                        <select id="reflectionAxis" onchange="updateReflectionPreview()">
+                            <option value="x">Sumbu X (y = 0)</option>
+                            <option value="y">Sumbu Y (x = 0)</option>
+                            <option value="y=x">Garis y = x</option>
+                            <option value="y=-x">Garis y = -x</option>
+                            <option value="vertical">Garis Vertikal (x = a)</option>
+                            <option value="horizontal">Garis Horizontal (y = b)</option>
+                            <option value="custom">Garis Custom (y = mx + c)</option>
+                            <option value="origin">Titik Asal O(0, 0)</option>
+                            <option value="point">Titik A(a, b)</option>
+                        </select>
+                    </div>
+                    <div id="customReflection"></div>
+                    <div id="reflectionPreview" class="axis-preview"></div>
+                `;
+                updateReflectionPreview();
+            } else if (type === 'translation') {
+                container.innerHTML = `
+                    <div class="coords-input">
+                        <div class="form-group">
+                            <label>Translasi X (a)</label>
+                            <input type="number" id="tx" value="3" step="0.5">
+                        </div>
+                        <div class="form-group">
+                            <label>Translasi Y (b)</label>
+                            <input type="number" id="ty" value="2" step="0.5">
+                        </div>
+                    </div>
+                    <div class="axis-preview">
+                        Rumus: T(a,b) → (x', y') = (x+a, y+b)
+                    </div>
+                `;
+            } else if (type === 'rotation') {
+                container.innerHTML = `
+                    <div class="form-group">
+                        <label>Sudut Rotasi (derajat)</label>
+                        <input type="number" id="angle" value="90" step="15">
+                    </div>
+                    <div class="form-group">
+                        <label>Pusat Rotasi</label>
+                        <select id="rotationCenter" onchange="updateRotationCenter()">
+                            <option value="origin">Titik Asal (0, 0)</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    <div id="customRotation"></div>
+                    <div class="axis-preview">
+                        Rumus Rotasi θ derajat terhadap (a,b):<br>
+                        x' = (x-a)cos(θ) - (y-b)sin(θ) + a<br>
+                        y' = (x-a)sin(θ) + (y-b)cos(θ) + b
+                    </div>
+                `;
+                updateRotationCenter();
+            } else if (type === 'dilation') {
+                container.innerHTML = `
+                    <div class="form-group">
+                        <label>Faktor Skala (k)</label>
+                        <input type="number" id="scaleFactor" value="2" step="0.1">
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            k > 1: Pembesaran | 0 < k < 1: Pengecilan | k < 0: Pembesaran + Refleksi
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label>Pusat Dilatasi</label>
+                        <select id="dilationCenter" onchange="updateDilationCenter()">
+                            <option value="origin">Titik Asal (0, 0)</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    <div id="customDilation"></div>
+                    <div class="axis-preview">
+                        Rumus: [P(a,b), k]<br>
+                        x' = k(x-a) + a<br>
+                        y' = k(y-b) + b
+                    </div>
+                `;
+                updateDilationCenter();
+            }
+        }
+
+        function updateReflectionPreview() {
+            const axis = document.getElementById('reflectionAxis').value;
+            const customDiv = document.getElementById('customReflection');
+            const preview = document.getElementById('reflectionPreview');
+            
+            if (axis === 'vertical') {
+                customDiv.innerHTML = `
+                    <div class="custom-inputs">
+                        <div class="form-group">
+                            <label>Nilai a (x = a)</label>
+                            <input type="number" id="vLine" value="2" step="0.5">
+                        </div>
+                    </div>
+                `;
+                preview.innerHTML = 'Cermin terhadap garis vertikal x = a';
+            } else if (axis === 'horizontal') {
+                customDiv.innerHTML = `
+                    <div class="custom-inputs">
+                        <div class="form-group">
+                            <label>Nilai b (y = b)</label>
+                            <input type="number" id="hLine" value="2" step="0.5">
+                        </div>
+                    </div>
+                `;
+                preview.innerHTML = 'Cermin terhadap garis horizontal y = b';
+            } else if (axis === 'custom') {
+                customDiv.innerHTML = `
+                    <div class="custom-inputs">
+                        <div class="coords-input">
+                            <div class="form-group">
+                                <label>m (gradien)</label>
+                                <input type="number" id="m" value="1" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>c (konstanta)</label>
+                                <input type="number" id="c" value="0" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+                `;
+                preview.innerHTML = 'Cermin terhadap garis y = mx + c';
+            } else if (axis === 'origin') {
+                customDiv.innerHTML = '';
+                preview.innerHTML = 'Cermin terhadap titik O(0,0): (x,y) → (-x,-y)';
+            } else if (axis === 'point') {
+                customDiv.innerHTML = `
+                    <div class="custom-inputs">
+                        <div class="coords-input">
+                            <div class="form-group">
+                                <label>Titik A - koordinat a</label>
+                                <input type="number" id="pointA" value="2" step="0.5">
+                            </div>
+                            <div class="form-group">
+                                <label>Titik A - koordinat b</label>
+                                <input type="number" id="pointB" value="2" step="0.5">
+                            </div>
+                        </div>
+                    </div>
+                `;
+                preview.innerHTML = 'Cermin terhadap titik A(a,b): (x,y) → (2a-x, 2b-y)';
+            } else {
+                customDiv.innerHTML = '';
+                if (axis === 'x') preview.innerHTML = 'Cermin terhadap sumbu X: (x,y) → (x,-y)';
+                else if (axis === 'y') preview.innerHTML = 'Cermin terhadap sumbu Y: (x,y) → (-x,y)';
+                else if (axis === 'y=x') preview.innerHTML = 'Cermin terhadap y=x: (x,y) → (y,x)';
+                else if (axis === 'y=-x') preview.innerHTML = 'Cermin terhadap y=-x: (x,y) → (-y,-x)';
+            }
+        }
+
+        function updateRotationCenter() {
+            const centerType = document.getElementById('rotationCenter').value;
+            const customDiv = document.getElementById('customRotation');
+            
+            if (centerType === 'custom') {
+                customDiv.innerHTML = `
+                    <div class="custom-inputs">
+                        <div class="coords-input">
+                            <div class="form-group">
+                                <label>Pusat X</label>
+                                <input type="number" id="cx" value="0" step="0.5">
+                            </div>
+                            <div class="form-group">
+                                <label>Pusat Y</label>
+                                <input type="number" id="cy" value="0" step="0.5">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                customDiv.innerHTML = '';
+            }
+        }
+
+        function updateDilationCenter() {
+            const centerType = document.getElementById('dilationCenter').value;
+            const customDiv = document.getElementById('customDilation');
+            
+            if (centerType === 'custom') {
+                customDiv.innerHTML = `
+                    <div class="custom-inputs">
+                        <div class="coords-input">
+                            <div class="form-group">
+                                <label>Pusat X</label>
+                                <input type="number" id="dx" value="0" step="0.5">
+                            </div>
+                            <div class="form-group">
+                                <label>Pusat Y</label>
+                                <input type="number" id="dy" value="0" step="0.5">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                customDiv.innerHTML = '';
+            }
+        }
+
+        // Apply transformation
+        function applyTransform() {
+            if (points.length === 0) {
+                alert('Masukkan titik terlebih dahulu!');
+                return;
+            }
+
+            const type = document.getElementById('transformType').value;
+            transformedPoints = [];
+
+            if (type === 'reflection') {
+                const axis = document.getElementById('reflectionAxis').value;
+                
+                points.forEach(p => {
+                    let newPoint = {x: p.x, y: p.y};
+                    
+                    if (axis === 'x') {
+                        newPoint = {x: p.x, y: -p.y};
+                    } else if (axis === 'y') {
+                        newPoint = {x: -p.x, y: p.y};
+                    } else if (axis === 'y=x') {
+                        newPoint = {x: p.y, y: p.x};
+                    } else if (axis === 'y=-x') {
+                        newPoint = {x: -p.y, y: -p.x};
+                    } else if (axis === 'vertical') {
+                        const a = parseFloat(document.getElementById('vLine').value) || 0;
+                        newPoint = {x: 2*a - p.x, y: p.y};
+                    } else if (axis === 'horizontal') {
+                        const b = parseFloat(document.getElementById('hLine').value) || 0;
+                        newPoint = {x: p.x, y: 2*b - p.y};
+                    } else if (axis === 'origin') {
+                        newPoint = {x: -p.x, y: -p.y};
+                    } else if (axis === 'point') {
+                        const a = parseFloat(document.getElementById('pointA').value) || 0;
+                        const b = parseFloat(document.getElementById('pointB').value) || 0;
+                        newPoint = {x: 2*a - p.x, y: 2*b - p.y};
+                    } else if (axis === 'custom') {
+                        const m = parseFloat(document.getElementById('m').value) || 1;
+                        const c = parseFloat(document.getElementById('c').value) || 0;
+                        
+                        const d = (p.x + (p.y - c) * m) / (1 + m * m);
+                        newPoint = {
+                            x: 2 * d - p.x,
+                            y: 2 * d * m - p.y + 2 * c
+                        };
+                    }
+                    
+                    transformedPoints.push(newPoint);
+                });
+            } else if (type === 'translation') {
+                const tx = parseFloat(document.getElementById('tx').value) || 0;
+                const ty = parseFloat(document.getElementById('ty').value) || 0;
+                
+                points.forEach(p => {
+                    transformedPoints.push({
+                        x: p.x + tx,
+                        y: p.y + ty
+                    });
+                });
+            } else if (type === 'rotation') {
+                const angle = parseFloat(document.getElementById('angle').value) || 0;
+                const rad = angle * Math.PI / 180;
+                const centerType = document.getElementById('rotationCenter').value;
+                
+                let cx = 0, cy = 0;
+                if (centerType === 'custom') {
+                    cx = parseFloat(document.getElementById('cx').value) || 0;
+                    cy = parseFloat(document.getElementById('cy').value) || 0;
+                }
+                
+                points.forEach(p => {
+                    const dx = p.x - cx;
+                    const dy = p.y - cy;
+                    transformedPoints.push({
+                        x: dx * Math.cos(rad) - dy * Math.sin(rad) + cx,
+                        y: dx * Math.sin(rad) + dy * Math.cos(rad) + cy
+                    });
+                });
+            } else if (type === 'dilation') {
+                const k = parseFloat(document.getElementById('scaleFactor').value) || 1;
+                const centerType = document.getElementById('dilationCenter').value;
+                
+                let dx = 0, dy = 0;
+                if (centerType === 'custom') {
+                    dx = parseFloat(document.getElementById('dx').value) || 0;
+                    dy = parseFloat(document.getElementById('dy').value) || 0;
+                }
+                
+                points.forEach(p => {
+                    transformedPoints.push({
+                        x: k * (p.x - dx) + dx,
+                        y: k * (p.y - dy) + dy
+                    });
+                });
+            }
+
+            drawBoth();
+            displayResults();
+        }
+
+        // Display results
+        function displayResults() {
+            const type = document.getElementById('transformType').value;
+            let html = '<h4>Titik Asli:</h4>';
+            
+            points.forEach((p, i) => {
+                html += `<p>P${i+1}(${p.x.toFixed(2)}, ${p.y.toFixed(2)})</p>`;
+            });
+            
+            html += '<h4>Titik Hasil Transformasi:</h4>';
+            transformedPoints.forEach((p, i) => {
+                html += `<p>P${i+1}'(${p.x.toFixed(2)}, ${p.y.toFixed(2)})</p>`;
+            });
+            
+            if (type === 'reflection') {
+                const axis = document.getElementById('reflectionAxis').value;
+                html += '<h4>Jenis Refleksi:</h4>';
+                if (axis === 'x') html += '<p>Refleksi terhadap sumbu X</p>';
+                else if (axis === 'y') html += '<p>Refleksi terhadap sumbu Y</p>';
+                else if (axis === 'y=x') html += '<p>Refleksi terhadap garis y = x</p>';
+                else if (axis === 'y=-x') html += '<p>Refleksi terhadap garis y = -x</p>';
+                else if (axis === 'origin') html += '<p>Refleksi terhadap titik O(0,0)</p>';
+                else if (axis === 'point') {
+                    const a = parseFloat(document.getElementById('pointA').value) || 0;
+                    const b = parseFloat(document.getElementById('pointB').value) || 0;
+                    html += `<p>Refleksi terhadap titik A(${a}, ${b})</p>`;
+                }
+            }
+            
+            document.getElementById('resultBox').innerHTML = html;
+        }
+
+        // Drawing functions
+        function drawGrid() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
+
+            for (let i = -20; i <= 20; i++) {
+                ctx.beginPath();
+                ctx.moveTo(offsetX + i * scale, 0);
+                ctx.lineTo(offsetX + i * scale, canvas.height);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(0, offsetY + i * scale);
+                ctx.lineTo(canvas.width, offsetY + i * scale);
+                ctx.stroke();
+            }
+
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(offsetX, 0);
+            ctx.lineTo(offsetX, canvas.height);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(0, offsetY);
+            ctx.lineTo(canvas.width, offsetY);
+            ctx.stroke();
+
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.fillText('0', offsetX + 5, offsetY - 5);
+            
+            for (let i = -20; i <= 20; i++) {
+                if (i !== 0 && i % 2 === 0) {
+                    ctx.fillText(i, offsetX + i * scale - 5, offsetY + 15);
+                    ctx.fillText(i, offsetX + 5, offsetY - i * scale + 5);
+                }
+            }
+        }
+
+        function drawOriginal() {
+            drawGrid();
+            if (points.length === 0) return;
+
+            ctx.fillStyle = 'rgba(102, 126, 234, 0.3)';
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 2;
+
+            ctx.beginPath();
+            points.forEach((p, i) => {
+                const x = offsetX + p.x * scale;
+                const y = offsetY - p.y * scale;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            if (points.length > 2) ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            points.forEach((p, i) => {
+                const x = offsetX + p.x * scale;
+                const y = offsetY - p.y * scale;
+                
+                ctx.fillStyle = '#667eea';
+                ctx.beginPath();
+                ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                ctx.fill();
+
+                ctx.fillStyle = '#333';
+                ctx.font = 'bold 14px Arial';
+                ctx.fillText(`P${i+1}`, x + 10, y - 10);
+            });
+        }
+
+        function drawBoth() {
+            drawGrid();
+            
+            if (points.length > 0) {
+                ctx.fillStyle = 'rgba(102, 126, 234, 0.3)';
+                ctx.strokeStyle = '#667eea';
+                ctx.lineWidth = 2;
+
+                ctx.beginPath();
+                points.forEach((p, i) => {
+                    const x = offsetX + p.x * scale;
+                    const y = offsetY - p.y * scale;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                if (points.length > 2) ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                points.forEach((p, i) => {
+                    const x = offsetX + p.x * scale;
+                    const y = offsetY - p.y * scale;
+                    
+                    ctx.fillStyle = '#667eea';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#333';
+                    ctx.font = 'bold 14px Arial';
+                    ctx.fillText(`P${i+1}`, x + 10, y - 10);
+                });
+            }
+
+            if (transformedPoints.length > 0) {
+                ctx.fillStyle = 'rgba(231, 76, 60, 0.3)';
+                ctx.strokeStyle = '#e74c3c';
+                ctx.lineWidth = 2;
+
+                ctx.beginPath();
+                transformedPoints.forEach((p, i) => {
+                    const x = offsetX + p.x * scale;
+                    const y = offsetY - p.y * scale;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                if (transformedPoints.length > 2) ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                transformedPoints.forEach((p, i) => {
+                    const x = offsetX + p.x * scale;
+                    const y = offsetY - p.y * scale;
+                    
+                    ctx.fillStyle = '#e74c3c';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#c0392b';
+                    ctx.font = 'bold 14px Arial';
+                    ctx.fillText(`P${i+1}'`, x + 10, y + 20);
+                });
+            }
+        }
+
+        // Canvas controls
+        function resetView() {
+            scale = 25;
+            offsetX = canvas.width / 2;
+            offsetY = canvas.height / 2;
+            if (transformedPoints.length > 0) {
+                drawBoth();
+            } else {
+                drawOriginal();
+            }
+        }
+
+        function zoomIn() {
+            scale *= 1.2;
+            if (transformedPoints.length > 0) {
+                drawBoth();
+            } else {
+                drawOriginal();
+            }
+        }
+
+        function zoomOut() {
+            scale /= 1.2;
+            if (transformedPoints.length > 0) {
+                drawBoth();
+            } else {
+                drawOriginal();
+            }
+        }
+
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.download = 'transformasi-geometri.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        // Drag canvas
+        let isDragging = false;
+        let lastX, lastY;
+
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const dx = e.clientX - lastX;
+                const dy = e.clientY - lastY;
+                offsetX += dx;
+                offsetY += dy;
+                lastX = e.clientX;
+                lastY = e.clientY;
+                
+                if (transformedPoints.length > 0) {
+                    drawBoth();
+                } else {
+                    drawOriginal();
+                }
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDragging = false;
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && (e.target.id === 'newX' || e.target.id === 'newY')) {
+                addPoint();
+            }
+        });
+    </script>
+</body>
+</html>
